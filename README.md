@@ -279,7 +279,7 @@ Version 2.1, 16/Apr/2001:
 
 ---
 
-Author {style="font-weight: bold;"}
+Author
 ------
 
 Prof. Dr. Ruben Carlo Benante
