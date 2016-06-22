@@ -42,29 +42,20 @@ gcc plugin), generates ASM (intel and AT&T syntax).
 Index
 -----
 
-[Usage](#usage)
-
-[Options](#options)
-
--   [Compiler Options](#compiler-options)
--   [Code generation Options](#code_generation_options)
--   [Run-time Options](#Runtime_options)
-
-[Notes](#Notes)
-
-[Description of the Brain Force
-language](#Description_of_the_Brain_Force_language)
-
--   [Extension of the language](#Extension_of_the_language:)
--   [Future extensions](#Future_extensions:)
-
-[Downloads](#Downloads)
-
-[Bugs](#Bugs)
-
-[Log](#Log)
-
-[Author](#Author)
+* [Usage](#usage)
+* [Options](#options)
+    -   [Compiler Options](#compiler-options)
+    -   [Code generation Options](#code-generation-options)
+    -   [Run-time Options](#runtime-options)
+* [Notes](#notes)
+* [Description of the Brain Force
+language](#description-of-the-brain-force-language)
+    -   [Extension of the language](#extension-of-the-language:)
+    -   [Future extensions](#future-extensions:)
+* [Downloads](#downloads)
+* [Bugs](#bugs)
+* [Log](#log)
+* [Author](#author)
 
 ---
 
