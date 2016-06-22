@@ -46,9 +46,9 @@ Index
 
 [Options](#options)
 
--   [Compiler Options](#compiler-options:)
--   [Code generation Options](#code_generation_options:)
--   [Run-time Options](#Runtime_options:)
+-   [Compiler Options](#compiler-options)
+-   [Code generation Options](#code_generation_options)
+-   [Run-time Options](#Runtime_options)
 
 [Notes](#Notes)
 
