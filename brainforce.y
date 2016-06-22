@@ -128,7 +128,7 @@ program:
 							fprintf(yyout, "  unsigned %s t[MAX]", (TYPECELL?(TYPECELL==1?"short":"int"):"char"));
 							if(TYPECELL==TYPEPOINTER)
 							{
-								fprintf(yyout, ", i");
+								fprintf(yyout, ", i=0");
 								if(SHARP>1)
 									fprintf(yyout, ", s;\n\n");
 								else
@@ -136,14 +136,22 @@ program:
 							}
 							else
 							{
-								fprintf(yyout, ";\n  unsigned %s i", (TYPEPOINTER?(TYPEPOINTER==1?"short":"int"):"char"));
+								fprintf(yyout, ";\n  unsigned %s i=0", (TYPEPOINTER?(TYPEPOINTER==1?"short":"int"):"char"));
 								if(SHARP>1)
 									fprintf(yyout, ", s;\n\n");
 								else
 									fprintf(yyout, ";\n\n");
 							}
-							fprintf(yyout, "  for(i=0; i<MAX; i++)\n");
-							fprintf(yyout, "    t[i]=%d;\n\n", ZEROMIN);
+	/*						fprintf(yyout, "  i=0;\n"); */
+							fprintf(yyout, "  do t[i++]=0;\n");
+							fprintf(yyout, "  while(");
+							if((MAXCELL==256 && TYPEPOINTER==0) || MAXCELL==65536)
+								fprintf(yyout, "i!=0);\n");
+							else
+								fprintf(yyout, "i<MAX);\n");
+
+	/*						fprintf(yyout, "  for(i=0; i<MAX; i++)\n"); */
+	/*						fprintf(yyout, "    t[i]=%d;\n\n", ZEROMIN); */
 							fprintf(yyout, "  i=0;\n\n");
                             derrprintf(1, "pass 3... (semantic analizer and code generator)\n");
                             pass3($1,0);

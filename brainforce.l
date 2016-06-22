@@ -23,8 +23,14 @@
 %{
  #include <stdlib.h>
  #include <ctype.h>
- #include <sys/wait.h>
  #include <stdarg.h>
+ #ifdef WIN32
+	#include <getopt.h>
+	#include <string.h>
+	#include <windows.h>
+ #else
+ 	#include <sys/wait.h>
+ #endif
 
   #include "brainforce.h"
   #include "y.tab.h"
@@ -83,7 +89,8 @@ void givewarranty_gpl(int excode)
 	fprintf(stderr, "THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.\n");
 	fprintf(stderr, "SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n");
 
-	fprintf(stderr, "\n\nThis program requires preservation of author attributions.\n");
+	fprintf(stderr, "\n\nThis program requires preservation of author attributions,\n");
+	fprintf(stderr, "according to clause 7. b)\n");
 	fprintf(stderr, "You should have received a copy of the GNU General Public License\n");
 	fprintf(stderr, "along with this program.  If not, see <http://www.beco.cc/doc/gpl.html>\n\n");
 
@@ -114,7 +121,7 @@ void givelicense_gpl(int excode)
 
 	fprintf(stderr, "\n\nThis program requires preservation of author attributions.\n");
 	fprintf(stderr, "You should have received a copy of the GNU General Public License\n");
-	fprintf(stderr, "along with this program.  If not, see <http://www.beco.cc/doc/gpl.html>\n\n");
+	fprintf(stderr, "along with this program. If not, see <http://www.beco.cc/doc/gpl.html>\n\n");
 
 	exit(excode);
 }
@@ -276,8 +283,19 @@ void givehelp(int excode)
 
 int main(int argc, char **argv)
 {
-	int recv, cpid;
+	int recv;
 	char opt;
+	char masm[13]="-masm=";
+	#ifdef WIN32
+	STARTUPINFO sinfo;
+	PROCESS_INFORMATION pinfo;
+	char cmdline[80];
+	HANDLE phandle;
+	phandle = GetCurrentProcess();
+	long recval;
+	#else
+	int cpid;
+	#endif
 
     /* runtime */
     int zflag=0, tflag=0, aflag=0, sharpflag=0, rflag=0, wflag=0, pflag=0, iflag=0, eflag=0;
@@ -878,13 +896,69 @@ int main(int argc, char **argv)
 	fclose(yyin);
 	if(oflag)
 		fclose(yyout);
-	derrprintf(4, "Generated %s c source file.\n", oarg);
+	derrprintf(4, "Generated c source file temporarily named %s.\n", oarg);
 	switch(GENERATE)
 	{
 		case 'C':
 			derrprintf(1, "The translation to C was a great success!\n\n");
 			return 0;
 		case 'S':
+ 			#ifdef WIN32
+			strcat(masm,syntax);
+			memset(&sinfo,0,sizeof(STARTUPINFO));
+			memset(&pinfo,0,sizeof(PROCESS_INFORMATION));
+			sinfo.cb = sizeof(STARTUPINFO);
+
+			derrprintf(5, "removing possible temp.c\n");
+			remove("temp.c");
+			derrprintf(4, "renaming %s to temp.c\n", oarg);
+			rename(oarg, "temp.c");
+
+			if(gflag)
+			{
+				sprintf(cmdline,"gcc.exe temp.c -o %s -Wall -S %s", oarg, masm);
+				derrprintf(4, "-g option selected. no optimization.\n");
+				derrprintf(3, "gcc temp.c -o %s -Wall -S %s\n", oarg, masm);
+			}
+			else
+			{
+				sprintf(cmdline,"gcc.exe temp.c -o %s -Wall -Os -S %s", oarg, masm);
+				derrprintf(4, "-g option deselected. optimization for size -Os.\n");
+				derrprintf(3, "gcc temp.c -o %s -Wall -Os -S %s\n", oarg, masm);
+			}
+			derrprintf(3, "Checking for GCC...\n");
+			recv = CreateProcess(NULL, cmdline, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, NULL, &sinfo, &pinfo);
+			if( recv == 0)
+			{
+				derrprintf(0, "I can't generate ASM file. GCC error.\n");
+				derrprintf(2, "Check to see if gcc directory (probably /usr/bin or c:\\Dev-Cpp\\bin) is in your PATH.\n");
+				exit(1);
+			}
+			else
+			{
+				derrprintf(4, "Parent waiting gcc child pid %d\n", pinfo.dwProcessId);
+				WaitForSingleObject( pinfo.hProcess, INFINITE );
+		        CloseHandle( pinfo.hProcess );
+				GetExitCodeProcess(phandle, &recval);
+				if(recval==0)
+				{
+					derrprintf(0, "I can't generate ASM file. GCC error %d.\n", recval);
+					derrprintf(2, "Check to see if gcc directory (probably /usr/bin or c:\\Dev-Cpp\\bin) is in your PATH.\n");
+					exit(1);
+				}
+				else
+				{
+					if(KEEP!='K')
+					{
+						derrprintf(3, "Removing temporary file temp.c\n");
+						remove("temp.c");
+					}
+					else
+						derrprintf(3, "Keeping temporary file temp.c\n");
+					derrprintf(1, "The translation to ASM was a great success!\n\n");
+				}
+			}
+ 			#else
 			if((cpid=fork()))
 			{
 				derrprintf(3, "Checking for GCC...\n");
@@ -893,7 +967,7 @@ int main(int argc, char **argv)
 				if(WIFEXITED(recv))
 					if(WEXITSTATUS(recv)!=0)
 					{
-						derrprintf(0, "I can't generate ASM file. GCC error %d\n", WEXITSTATUS(recv));
+						derrprintf(0, "I can't generate ASM file. GCC error %d.\n", WEXITSTATUS(recv));
 						if(WEXITSTATUS(recv)==10)
 							derrprintf(2, "Check to see if gcc directory (probably /usr/bin or c:\\Dev-Cpp\\bin) is in your PATH.\n");
 						exit(1);
@@ -907,7 +981,7 @@ int main(int argc, char **argv)
 						}
 						else
 							derrprintf(3, "Keeping temporary file temp.c\n");
-						derrprintf(1, "The translation ASM was a great success!\n\n");
+						derrprintf(1, "The to translation ASM was a great success!\n\n");
 					}
 				else
 				{
@@ -920,7 +994,6 @@ int main(int argc, char **argv)
 			{
 				derrprintf(4, "renaming %s to temp.c\n", oarg);
 				rename(oarg, "temp.c");
-				char masm[13]="-masm=";
 				strcat(masm,syntax);
 				if(gflag)
 				{
@@ -938,9 +1011,65 @@ int main(int argc, char **argv)
 				derrprintf(4, "Child pid %d error code 10\n", getpid());
 				exit(10);		//die alone in the mud
 			}
+			#endif
 			return 0;
 		case 'B': /* creating binary file */
 		case 'K': /* keeping intermediate c source file */
+ 			#ifdef WIN32
+			memset(&sinfo,0,sizeof(STARTUPINFO));
+			memset(&pinfo,0,sizeof(PROCESS_INFORMATION));
+			sinfo.cb = sizeof(STARTUPINFO);
+
+			derrprintf(5, "removing possible temp.c\n");
+			remove("temp.c");
+			derrprintf(4, "renaming %s to temp.c\n", oarg);
+			rename(oarg, "temp.c");
+
+			if(gflag)
+			{
+				sprintf(cmdline,"gcc.exe temp.c -o %s -Wall -g", oarg);
+				derrprintf(4, "-g option selected. no optimization.\n");
+				derrprintf(3, "gcc temp.c -o %s -Wall -g\n", oarg);
+			}
+			else
+			{
+				sprintf(cmdline,"gcc.exe temp.c -o %s -Wall -Os -S %s", oarg, masm);
+				derrprintf(4, "-g option deselected. optimization for size -Os.\n");
+				derrprintf(3, "gcc temp.c -o %s -Wall -Os\n", oarg);
+			}
+			derrprintf(3, "Checking for GCC...\n");
+			recv = CreateProcess(NULL, cmdline, NULL, NULL, FALSE, NORMAL_PRIORITY_CLASS, NULL, NULL, &sinfo, &pinfo);
+			if( recv == 0)
+			{
+				derrprintf(0, "I can't generate binary file. GCC error.\n");
+				derrprintf(2, "Check to see if gcc directory (probably /usr/bin or c:\\Dev-Cpp\\bin) is in your PATH.\n");
+				exit(1);
+			}
+			else
+			{
+				derrprintf(4, "Parent waiting gcc child pid %d\n", pinfo.dwProcessId);
+				WaitForSingleObject( pinfo.hProcess, INFINITE );
+		        CloseHandle( pinfo.hProcess );
+				GetExitCodeProcess(phandle, &recval);
+				if(recval==0)
+				{
+					derrprintf(0, "I can't generate binary file. GCC error %d.\n", recval);
+					derrprintf(2, "Check to see if gcc directory (probably /usr/bin or c:\\Dev-Cpp\\bin) is in your PATH.\n");
+					exit(1);
+				}
+				else
+				{
+					if(KEEP!='K')
+					{
+						derrprintf(3, "Removing temporary file temp.c\n");
+						remove("temp.c");
+					}
+					else
+						derrprintf(3, "Keeping temporary file temp.c\n");
+					derrprintf(1, "The compilation was a great success!\n\n");
+				}
+			}
+ 			#else
 			if((cpid=fork()))
 			{
 				derrprintf(3, "Checking for GCC...\n");
@@ -949,7 +1078,7 @@ int main(int argc, char **argv)
 				if(WIFEXITED(recv))
 					if(WEXITSTATUS(recv)!=0)
 					{
-						derrprintf(0, "I can't generate binary file. GCC error %d\n", WEXITSTATUS(recv));
+						derrprintf(0, "I can't generate binary file. GCC error %d.\n", WEXITSTATUS(recv));
 						if(WEXITSTATUS(recv)==10)
 							derrprintf(2, "Check to see if gcc directory (probably /usr/bin or c:\\Dev-Cpp\\bin) is in your PATH.\n");
 						exit(1);
@@ -992,6 +1121,7 @@ int main(int argc, char **argv)
 				derrprintf(4, "Child pid %d error code 10\n", getpid());
 				exit(10);		//die alone in the mud
 			}
+			#endif
 			return 0;
 	}
 	return 0;
