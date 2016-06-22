@@ -4,10 +4,25 @@
 # creating C source code and runs gcc to create the last binary target.
 #
 #/*
-#    Author: Ruben Carlo Benante (Dr. Beco)
-#    Email: rcb [at] beco.cc
-#    Date: 06-Apr-11
-#    Version 1.0
+#     BrainForce Compiler Script, a make script to the compiler
+#     Copyright (C) 2011  Ruben Carlo Benante <rcb [at] beco.cc>
+#
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, version 2 of the License.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this program. If not, see <http://www.beco.cc/doc/gpl.html>
+#
+#     Author: Ruben Carlo Benante (Dr. Beco)
+#     Email: rcb [at] beco.cc
+#     Creation date: 05/Apr/2011
+#     WebPage: <http://www.beco.cc/compiler/brainforce/>
 #*/
 #
 # Example:
@@ -51,10 +66,19 @@
 
 echo --- flex -------------------- flex $1.l
 flex $1.l
+if [ $? -ne 0 ]; then
+	exit $?
+fi
 echo --- bison ------------------- bison -dy $1.y
 bison -dy $1.y
+if [ $? -ne 0 ]; then
+	exit $?
+fi
 echo --- gcc --------------------- gcc y.tab.c lex.yy.c $1.c -o $1.bin -Wall
 gcc y.tab.c lex.yy.c $1.c -o $1.bin -Wall
+if [ $? -ne 0 ]; then
+	exit $?
+fi
 
 #To compile the BF source file using your new BrainForce compiler, uncomment the last lines:
 #
@@ -83,7 +107,13 @@ gcc y.tab.c lex.yy.c $1.c -o $1.bin -Wall
 
 echo --- brainforce ---------------- ./$1.bin $2.bf -o $2.c $3 $4 $5 $6 $7 $8 $9
 ./$1.bin $2.bf -o $2.c $3 $4 $5 $6 $7 $8 $9
+if [ $? -ne 0 ]; then
+	exit $?
+fi
 echo --- gcc --------------------- gcc $2.c -o $2.bin
 gcc $2.c -o $2.bin
+if [ $? -ne 0 ]; then
+	exit $?
+fi
 echo --- Running! ---------------- ./$2.bin
 ./$2.bin
