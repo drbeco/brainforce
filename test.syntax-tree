@@ -1,0 +1,41 @@
+    BrainForce Compiler v.1.0, An esoteric programming language
+    Author: Ruben Carlo Benante (Dr. Beco)
+    Email: rcb [at] beco.cc
+    Creation date: 05/Apr/2011
+    Project based on the ideas of Urban Muller (http://fi.aminet.net/dev/lang)
+    WebPage: www.beco.cc/compiler/brainforce
+    License: CC-3.0 http://creativecommons.org/licenses/by-nc-sa/3.0/
+
+---------------------------- Syntax Tree ----------------------------
+(0) T->oper='l'
+(1) ptn[0]->oper='l'
+(2) ptn[0]->oper='l'
+(3) ptn[0]->oper='l'
+(4) ptn[0]->oper='l'
+(5) ptn[0]->oper='l'
+(6) ptn[0]->oper='l'
+(7) ptn[0]->oper='l'
+(8) ptn[0]->oper='l'
+(9) ptn[0]->oper='l'
+(10) ptn[0]->oper='l'
+(11) ptn[0]->oper='l'
+(12) ptn[0]->oper='l'
+(13) ptn[0]->oper='l'
+(14) ptn[0]->oper='l'
+(15) ptn[0]->oper='-'
+(15) ptn[1]->oper='-'
+(14) ptn[1]->oper='-'
+(13) ptn[1]->oper=','
+(12) ptn[1]->oper='+'
+(11) ptn[1]->oper='+'
+(10) ptn[1]->oper='.'
+(9) ptn[1]->oper='>'
+(8) ptn[1]->oper='+'
+(7) ptn[1]->oper='+'
+(6) ptn[1]->oper='.'
+(5) ptn[1]->oper='#'
+(4) ptn[1]->oper='['
+(5) ptn[0]->oper='-'
+(3) ptn[1]->oper='.'
+(2) ptn[1]->oper='<'
+(1) ptn[1]->oper='.'
