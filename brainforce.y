@@ -143,7 +143,7 @@ program:
 									fprintf(yyout, ";\n\n");
 							}
 	/*						fprintf(yyout, "  i=0;\n"); */
-							fprintf(yyout, "  do t[i++]=0;\n");
+							fprintf(yyout, "  do t[i++]=ZMIN;\n"); /*t[i++]=0*/
 							fprintf(yyout, "  while(");
 							if((MAXCELL==256 && TYPEPOINTER==0) || MAXCELL==65536)
 								fprintf(yyout, "i!=0);\n");
