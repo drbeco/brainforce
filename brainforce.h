@@ -1,6 +1,6 @@
 /*
-    BrainForce Compiler, An esoteric programming language
-    Copyright (C) 2011  Ruben Carlo Benante <rcb [at] beco.cc>
+    BrainForce Compiler, An esoteric programming language compiler
+    Copyright (C) 2011-2023  Ruben Carlo Benante <rcb [at] beco.cc>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ Usage:
 	For all options, please consult <http://www.beco.cc/compiler/brainforce/usage.html>
 */
 
-#ifndef _PORTUGOL_H_
-#define _PORTUGOL_H_
+#ifndef _BRAINFORCE_H_
+#define _BRAINFORCE_H_
 
 //#define SINTMAX 2000000000
 //#define UINTMAX 4000000000

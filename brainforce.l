@@ -1,6 +1,6 @@
 /*
-    BrainForce Compiler, An esoteric programming language
-    Copyright (C) 2011  Ruben Carlo Benante <rcb [at] beco.cc>
+    BrainForce Compiler, an esoteric programming language compiler
+    Copyright (C) 2011-2023  Ruben Carlo Benante <rcb [at] beco.cc>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ void header(void)
 	if(!ok)
 	{
 		fprintf(stderr, "BrainForce Compiler, version %s_%s. An esoteric programming language.\n", __DATE__, __TIME__);
-		fprintf(stderr, "Copyright (C) 2011 Ruben Carlo Benante <rcb%cbeco.cc>.\n\n",'@');
+		fprintf(stderr, "Copyright (C) 2011-2023 Ruben Carlo Benante <rcb%cbeco.cc>.\n\n",'@');
 		fprintf(stderr, "This program comes with ABSOLUTELY NO WARRANTY; for details type 'brainforce -cw'.\n");
 		fprintf(stderr, "This is free software, and you are welcome to redistribute it\n");
 		fprintf(stderr, "under certain conditions; type 'brainforce -cc' for details.\n\n");
